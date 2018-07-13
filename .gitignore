@@ -1,0 +1,13 @@
+*.dat
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+/pres.run.xml
+*.snm
+*.toc
+/pres-blx.bib
