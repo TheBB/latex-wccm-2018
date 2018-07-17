@@ -1,7 +1,7 @@
 \documentclass{beamer}
 
 \usetheme{CambridgeUS}
-\usecolortheme{orchid}
+\usecolortheme{dolphin}
 
 \usepackage{wrapfig}
 \usepackage{siunitx}
@@ -343,7 +343,7 @@
 
   \begin{itemize}
   \item Balance between velocity and pressure space is delicate.
-  \item Too many velocity DoFs: can't enforce the continuity equation. Too many pressure DoFs:
+  \item Too many velocity DoFs: poor enforcement of the continuity equation. Too many pressure DoFs:
     pressure instability.
   \item A pair of spaces $(V,P)$ is divergence-conforming if $\operatorname{div} V = P$. Ensures the strong
     (pointwise) form of the continuity equation, and no pressure instabilities.
@@ -430,7 +430,16 @@
       \draw[->] (UNLIF.south) -- (POD.north);
       \draw[->] (POD.south) -- (RB.north);
 
-      \only<2-6>{\draw[->, very thick, white] (-3.5,5.2) -- (HIFI.west);}
+      \only<1-6>{\node[anchor=west,white] at (3.5,6.4) {Divergence-conforming};}
+      \only<2>{\node[anchor=west] at (3.5,6.4) {Divergence-conforming};}
+      \only<3-6>{\node[anchor=west,gray] at (3.5,6.4) {Divergence-conforming};}
+      \only<3>{\node[anchor=west] at (3.5,5.2) {Piola transform};}
+      \only<4-6>{\node[anchor=west,gray] at (3.5,5.2) {Piola transform};}
+      \only<4>{\node[anchor=west] at (3.5,4.0) {Divergence-free lift};}
+      \only<5-6>{\node[anchor=west,gray] at (3.5,4.0) {Divergence-free lift};}
+      \only<5>{\node[anchor=west] at (3.5,2.8) {Linearity};}
+      \only<6>{\node[anchor=west,gray] at (3.5,2.8) {Linearity};}
+      \only<6>{\node[anchor=west] at (3.5,1.6) {Divergence-free basis};}
       \only<2>{\draw[->, very thick, darkblue] (3.5,6.4) -- (HIFI.east);}
       \only<3>{\draw[->, very thick, darkblue] (3.5,5.2) -- (RGEOM.east);}
       \only<4>{\draw[->, very thick, darkblue] (3.5,4) -- (UNLIF.east);}
@@ -667,11 +676,11 @@
 
   \begin{align*}
   ({\bm\pi}^*_{\bm\mu}a)(\hat{\bm u}, \hat{\bm w}; \varphi)
-    &= \sum_{i,j=0}^{2n} \varphi^{i+j} \int_{\hat{\Omega}}
+    &= \nu \sum_{i,j=0}^{2n} \varphi^{i+j} \int_{\hat{\Omega}}
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : \nabla (\bm B^{(+)}_j \hat{\bm w}) \\
-    &+ \sum_{i,j=0}^{2n} \varphi^{i+j+1} \int_{\hat{\Omega}}
+    &+ \nu \sum_{i,j=0}^{2n} \varphi^{i+j+1} \int_{\hat{\Omega}}
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_1 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
-    &- \sum_{i,j=0}^{2n} \varphi^{i+j+2} \int_{\hat{\Omega}}
+    &- \nu \sum_{i,j=0}^{2n} \varphi^{i+j+2} \int_{\hat{\Omega}}
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_2 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
   ({\bm\pi}^*_{\bm\mu}b)(\hat{p}, \hat{\bm w}; \varphi) &= \sum_{i,j=0}^{2n} \varphi^{i+j}
       \int_{\hat{\Omega}} \hat{p} \bm B^{(-)}_i :
@@ -811,6 +820,7 @@
         \addplot[red, thick, densely dashed, mark=o, mark options={solid}]
         table[x index={0}, y index={8}]{data/airfoil-results-piola-sups-no-block.csv};
         \legend{TH ($v$), TH ($p$), DC ($v$), DC ($p$)}
+        \draw[rounded corners=1mm, thick] (axis cs:28.5,0.0085) rectangle (axis cs:31.5,0.03);
       \end{axis}
     \end{tikzpicture}
   \end{center}
@@ -850,6 +860,10 @@
         table[x index={11}, y index={4}]{data/airfoil-results-combined.csv};
         \addplot[cyan, thick, densely dashed, mark=o, mark options={solid}]
         table[x index={11}, y index={8}]{data/airfoil-results-combined.csv};
+        \draw[rounded corners=1mm, thick] (axis cs:0.0255,0.009) rectangle (axis cs:0.035,0.032);
+        \draw[rounded corners=1mm, thick] (axis cs:0.255,0.009) rectangle (axis cs:0.35,0.020);
+        \draw (axis cs:0.0299,0.009) -- (axis cs:0.0299,0.003) -- (axis cs:0.299,0.003) -- (axis cs:0.299,0.009);
+        \node[anchor=south] at (axis cs:0.18,0.003) {\boldmath$\times 10$};
         \legend{TH ($v$), TH ($p$), DC ($v$), DC ($p$), DC-LP ($v$), DC-LP ($p$)}
       \end{axis}
     \end{tikzpicture}
