@@ -509,6 +509,8 @@
       \node at (3.475,-2.475) {\large $PV$};
       \node at (4.475,-2.475) {\large $PS$};
     \end{tikzpicture}
+    \\~\\
+    \textcolor{white}{Note the block triangular structure.}
   \end{center}
 \end{frame}
 
@@ -680,7 +682,7 @@
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : \nabla (\bm B^{(+)}_j \hat{\bm w}) \\
     &+ \nu \sum_{i,j=0}^{2n} \varphi^{i+j+1} \int_{\hat{\Omega}}
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_1 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
-    &- \nu \sum_{i,j=0}^{2n} \varphi^{i+j+2} \int_{\hat{\Omega}}
+    &- \sum_{i,j=0}^{2n} \varphi^{i+j+2} \int_{\hat{\Omega}}
       \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_2 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
   ({\bm\pi}^*_{\bm\mu}b)(\hat{p}, \hat{\bm w}; \varphi) &= \sum_{i,j=0}^{2n} \varphi^{i+j}
       \int_{\hat{\Omega}} \hat{p} \bm B^{(-)}_i :
