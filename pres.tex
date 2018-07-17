@@ -562,17 +562,11 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Affine representations}
+  \frametitle{Problem specification}
 
   \begin{itemize}
   \item We will try two high-fidelity methods: a Taylor-Hood (1,2)-method and an IGA (1,2)
-    divergence-conforming method.
-  \item Not possible to express the Navier-Stokes problem as finite sums
-    \[
-      \bm A_h(\bm \mu) = \textstyle \sum_i \xi_i(\bm \mu) \bm A_i, \qquad
-      \bm f_h(\bm \mu) = \textstyle \sum_i \chi_i(\bm \mu) \bm f_i
-    \]
-  \item Instead, we use truncated polynomial series in $\varphi$.
+    divergence-conforming method, with both approaches to pressure recovery.
   \item The parameter domain was chosen as
     \[
       \mathcal{P} = [-\SI{35}{\degree}, +\SI{35}{\degree}] \times
@@ -581,7 +575,60 @@
   \item We can expect about $10$ digits of accuracy with a reasonable number of terms
     (${\sim}25$ for TH, ${\sim}75$ for DC).
   \item Only \emph{stationary} Navier-Stokes, with $\nu = \frac{1}{6}$.
+  \item We chose equal number of modes in all spaces: $N_\textsc{v} = N_\textsc{s} = N_\textsc{p} = M$.
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Affine representations}
+
+  \begin{itemize}
+  \item Not possible to express the Navier-Stokes problem as finite sums
+    \[
+      \bm A_h(\bm \mu) = \textstyle \sum_i \xi_i(\bm \mu) \bm A_i, \qquad
+      \bm f_h(\bm \mu) = \textstyle \sum_i \chi_i(\bm \mu) \bm f_i
+    \]
+  \item Instead, we use truncated polynomial series in $\varphi$.\footcite{Fonn2018fdc}
+  \item Recall: the intention is to encode \emph{all} parameters explicitly in the representation of
+    the bi- or trilinear forms.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Affine representations (TH)}
+  \begin{align*}
+    ({\bm\pi}^*_{\bm\mu}a)(\hat{\bm u}, \hat{\bm w}; \varphi) &=
+    \nu \int_{\hat{\Omega}} \nabla \hat{\bm u} : \nabla \hat{\bm w}
+    + \nu \varphi \int_{\hat{\Omega}}
+    \nabla \hat{\bm u} : (\bm D_1 \nabla) \hat{\bm w} \\
+    &- \nu \varphi^2 \int_{\hat{\Omega}}
+    \nabla \hat{\bm u} : (\bm D_2 \nabla) \hat{\bm w} \\
+    ({\bm\pi}^*_{\bm\mu}b)(\hat{p}, \hat{\bm w}; \varphi) &\approx \sum_{i=0}^{2n} \varphi^i
+    \int_{\hat{\Omega}} \hat{p} \bm B^{(-)}_i : \nabla \hat{\bm w} \\
+    ({\bm\pi}^*_{\bm\mu}c)(\hat{\bm u}, \hat{\bm v}, \hat{\bm w}; \varphi)
+    &\approx \sum_{i=0}^{2n} \varphi^i \int_{\hat{\Omega}}
+    (\hat{\bm u} \cdot \bm B^{(-)}_i \nabla) \hat{\bm v} \cdot \hat{\bm w}
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Affine representations (IGA)}
+
+  \begin{align*}
+  ({\bm\pi}^*_{\bm\mu}a)(\hat{\bm u}, \hat{\bm w}; \varphi)
+    &= \sum_{i,j=0}^{2n} \varphi^{i+j} \int_{\hat{\Omega}}
+      \nabla (\bm B^{(+)}_i \hat{\bm u}) : \nabla (\bm B^{(+)}_j \hat{\bm w}) \\
+    &+ \sum_{i,j=0}^{2n} \varphi^{i+j+1} \int_{\hat{\Omega}}
+      \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_1 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
+    &- \sum_{i,j=0}^{2n} \varphi^{i+j+2} \int_{\hat{\Omega}}
+      \nabla (\bm B^{(+)}_i \hat{\bm u}) : (\bm D_2 \nabla) (\bm B^{(+)}_j \hat{\bm w}) \\
+  ({\bm\pi}^*_{\bm\mu}b)(\hat{p}, \hat{\bm w}; \varphi) &= \sum_{i,j=0}^{2n} \varphi^{i+j}
+      \int_{\hat{\Omega}} \hat{p} \bm B^{(-)}_i :
+      \nabla \left( \bm B^{(+)}_j \hat{\bm w} \right) \\
+  ({\bm\pi}^*_{\bm\mu}c)(\hat{\bm u}, \hat{\bm v}, \hat{\bm w}; \varphi)
+  &= \sum_{i,j=0}^{2n} \varphi^{i+j}
+    \int_{\hat{\Omega}} (\hat{\bm u} \cdot \nabla) \bm B^{(+)}_i \hat{\bm v} \cdot \bm B^{(+)}_j \hat{\bm w}.
+  \end{align*}
 \end{frame}
 
 \begin{frame}
@@ -772,17 +819,17 @@
 %   \end{center}
 % \end{frame}
 
-% \begin{frame}
-%   \frametitle{Summary}
-%   \begin{itemize}
-%   \item Reduced order models can offer dramatic speed-ups for certain applications.
-%   \item They combine nicely with IGA and div-compatible spaces to form fully
-%     divergence-free function spaces without need for pressure fields.
-%   \item Divergence-free RBMs can be much faster than other RBMs, in spite of additional complexity
-%     in the offline stage (remember, all is fair there.)
-%   \end{itemize}
-%   ~\\ \begin{center} Thanks! \end{center}
-% \end{frame}
+\begin{frame}
+  \frametitle{Summary}
+  \begin{itemize}
+  \item Reduced order models can offer dramatic speed-ups for certain applications.
+  \item They combine nicely with IGA and div-compatible spaces to form fully
+    divergence-free function spaces without need for pressure fields.
+  \item Divergence-free RBMs can be much faster than other RBMs, in spite of additional complexity
+    in the offline stage (remember, all is fair there.)
+  \end{itemize}
+  ~\\ \begin{center} Thank you! \end{center}
+\end{frame}
 
 \begin{frame}
   \frametitle{References}
