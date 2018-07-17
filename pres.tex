@@ -29,48 +29,61 @@
 \definecolor{cadet}{HTML}{DAE1FF}
 \definecolor{salmon}{HTML}{FFB08A}
 
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
 \begin{document}
 
 \title[Reduced Order Models]{
   Reduced Order Models for Divergence-Conforming Isogeometric Flow Simulations
 }
 \author[T.~Kvamsdal]{
-  T.~Kvamsdal\inst{1,2,4} \and
+  T.~Kvamsdal\inst{1,2} \and
   E.~Fonn\inst{2} \and
   E.~H.~van Brummelen\inst{3} \and
   A.~Rasheed\inst{2} \and
 }
 \institute[NTNU/SINTEF]{
-  \inst{1}%
-  \url{trond.kvamsdal@math.ntnu.no}
+  \and \inst{1}%
+  Department of Mathematical Sciences, NTNU
   \and \inst{2}%
   Applied Mathematics and Cybernetics, SINTEF Digital
   \and \inst{3}%
   Department of Mechanical Engineering, TU/e
-  \and \inst{4}%
-  Department of Mathematical Sciences, NTNU
 }
 \date[WCCM 2018]{}
 
-\titlegraphic{\includegraphics[width=0.3\textwidth]{common/sintef}}
+\titlegraphic{
+  \includegraphics[height=0.05\textheight]{common/ntnu} \hspace{0.1\textheight}
+  \includegraphics[height=0.05\textheight]{common/sintef} \hspace{0.1\textheight}
+  \includegraphics[height=0.05\textheight]{common/tue}
+}
 
 \begin{frame}
   \titlepage
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Outline}
-%   \begin{enumerate}
-%   \item Motivation of RBMs
-%   \item How RBMs are built, offline-online distinction
-%   \item Affine representations (the catch)
-%   \item Pretty pictures (backwards-facing step channel)
-%   \item Where divergence-conformity enters into it
-%   \item Pressure reconstruction
-%   \item Flow around NACA0015 airfoil
-%   \item Summary
-%   \end{enumerate}
-% \end{frame}
+\begin{frame}
+  \frametitle{Outline}
+  \begin{enumerate}
+  \item Basics of Reduced Basis Methods
+  \item Stationary Navier-Stokes flow
+  \item Pressure recovery
+  \item Numerical examples
+  \item Results
+  \item Concluding remarks
+  \end{enumerate}
+\end{frame}
+
+\section{Basics of Reduced Basis Methods}
 
 \begin{frame}
   \frametitle{Parameter-dependent models}
@@ -106,17 +119,17 @@
     \begin{tikzpicture}[
       class/.style={rectangle, draw=darkblue, rounded corners, align=center, minimum height=0.7cm}
       ]
-      \node[class, fill=salmon] (MU1) at (-2,-1.6) {$\bm \mu$};
-      \node[class, fill=salmon] (MU2) at (-2,-0.8) {$\bm \mu$};
-      \node[class, fill=salmon] (MU3) at (-2,0) {$\bm \mu$};
-      \node[class, fill=salmon] (MU4) at (-2,0.8) {$\bm \mu$};
-      \node[class, fill=salmon] (MU5) at (-2,1.6) {$\bm \mu$};
+      \node[class, fill=salmon] (MU1) at (-2.1,-1.6) {$\bm \mu_1$};
+      \node[class, fill=salmon] (MU2) at (-2.1,-0.8) {$\bm \mu_2$};
+      \node[class, fill=salmon] (MU3) at (-2.1,0) {$\bm \mu_3$};
+      \node[class, fill=salmon] (MU4) at (-2.1,0.8) {$\bm \mu_4$};
+      \node[class, fill=salmon] (MU5) at (-2.1,1.6) {$\bm \mu_5$};
       \node[class] (MOD) at (0,0) {Model};
-      \node[class] (SOL1) at (2,-1.6) {$\bm u(\bm \mu)$};
-      \node[class] (SOL2) at (2,-0.8) {$\bm u(\bm \mu)$};
-      \node[class] (SOL3) at (2,0) {$\bm u(\bm \mu)$};
-      \node[class] (SOL4) at (2,0.8) {$\bm u(\bm \mu)$};
-      \node[class] (SOL5) at (2,1.6) {$\bm u(\bm \mu)$};
+      \node[class] (SOL1) at (2.1,-1.6) {$\bm u(\bm \mu_1)$};
+      \node[class] (SOL2) at (2.1,-0.8) {$\bm u(\bm \mu_2)$};
+      \node[class] (SOL3) at (2.1,0) {$\bm u(\bm \mu_3)$};
+      \node[class] (SOL4) at (2.1,0.8) {$\bm u(\bm \mu_4)$};
+      \node[class] (SOL5) at (2.1,1.6) {$\bm u(\bm \mu_5)$};
       \draw[->,rounded corners] (MU1.east) -- ++(0.6,0) |- ([yshift=-6]MOD.west);
       \draw[->,rounded corners] (MU2.east) -- ++(0.3,0) |- ([yshift=-3]MOD.west);
       \draw[->] (MU3.east) -- (MOD.west);
@@ -138,7 +151,7 @@
     if not impossible.
   \item Too many DoFs $N$ to finish in a realistic timeframe.
   \item Usually,
-    \[ M = \dim \left( \left\{ \bm u(\bm \mu) \,|\, \bm \mu \in \mathcal{P} \right\} \right) \ll N \]
+    \[ M = \dim \operatorname{``span''} \left( \left\{ \bm u(\bm \mu) \,|\, \bm \mu \in \mathcal{P} \right\} \right) \ll N \]
   \item Idea: create a model with number of DoFs closely matching the physical dimension of the
     problem.
   \item Often, $M \sim 100$ or so!
@@ -278,7 +291,7 @@
   \begin{block}{\centering Our guiding principle}
     \begin{center}
       \vspace{5mm}
-      \textbf{Any}* extra cost in the offline stage is worth paying, \\
+      ``\textbf{Any}'' extra cost in the offline stage is worth paying, \\
       no matter how much, if it makes the online stage faster. \\
       \vspace{5mm}
     \end{center}
@@ -289,7 +302,7 @@
   \begin{block}{\centering Our guiding principle}
     \begin{center}
       \vspace{5mm}
-      All is fair in love, war and the offline stage. \\
+      All is fair in love, war \emph{and the offline stage}. \\
       --- John Lyly (\emph{Euphues}; 1579)
       \vspace{5mm}
     \end{center}
@@ -309,6 +322,32 @@
   \item Each $\bm A_i$ and $\bm f_i$ can be projected independently onto a reduced basis and stored.
   \item This makes the online stage completely high-fidelity-agnostic.
   \item Deriving these \emph{affine representations} is the core detail of RBM.
+  \end{itemize}
+\end{frame}
+
+\section{Stationary Navier-Stokes flow}
+
+\begin{frame}
+  \frametitle{Navier-Stokes equations}
+
+  \begin{alignat*}{2}
+    -\nu \Delta \bm u + (\bm u \cdot \nabla) \bm u + \nabla p &= \bm f && \qquad \text{in } \Omega, \\
+    \nabla \cdot \bm u &= 0 && \qquad \text{in } \Omega, \\
+    \bm u &= \bm g && \qquad \text{on } \Gamma_\text{D}, |\Gamma_D| > 0 \\
+    -p \bm n + \nu (\nabla \bm u) \bm n &= \bm h && \qquad \text{on } \Gamma_\text{N}.
+  \end{alignat*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Divergence-conforming methods}
+
+  \begin{itemize}
+  \item Balance between velocity and pressure space is delicate.
+  \item Too many velocity DoFs: can't enforce the continuity equation. Too many pressure DoFs:
+    pressure instability.
+  \item A pair of spaces $(V,P)$ is divergence-conforming if $\operatorname{div} V = P$. Ensures the strong
+    (pointwise) form of the continuity equation, and no pressure instabilities.
+  \item IGA unlocks easy construction of such spaces.\footcite{Buffa2010iae,Evans2013idc1}
   \end{itemize}
 \end{frame}
 
@@ -400,6 +439,8 @@
     \end{tikzpicture}
   \end{center}
 \end{frame}
+
+\section{Pressure recovery}
 
 \begin{frame}
   \frametitle{Pressure recovery}
@@ -494,6 +535,8 @@
   \end{center}
 \end{frame}
 
+\section{Numerical examples}
+
 \begin{frame}
   \frametitle{Flow around airfoil}
 
@@ -572,8 +615,6 @@
       \mathcal{P} = [-\SI{35}{\degree}, +\SI{35}{\degree}] \times
       [\SI{1}{\meter/\second}, \SI{20}{\meter/\second}].
     \]
-  \item We can expect about $10$ digits of accuracy with a reasonable number of terms
-    (${\sim}25$ for TH, ${\sim}75$ for DC).
   \item Only \emph{stationary} Navier-Stokes, with $\nu = \frac{1}{6}$.
   \item We chose equal number of modes in all spaces: $N_\textsc{v} = N_\textsc{s} = N_\textsc{p} = M$.
   \end{itemize}
@@ -589,9 +630,19 @@
       \bm f_h(\bm \mu) = \textstyle \sum_i \chi_i(\bm \mu) \bm f_i
     \]
   \item Instead, we use truncated polynomial series in $\varphi$.\footcite{Fonn2018fdc}
+  \item We can expect about $10$ digits of accuracy with a reasonable number of terms
+    (${\sim}25$ for TH, ${\sim}75$ for DC).
   \item Recall: the intention is to encode \emph{all} parameters explicitly in the representation of
     the bi- or trilinear forms.
   \end{itemize}
+
+  \[
+    \bm J = \sum_i \varphi^i \bm B_i^{(+)}
+    \qquad \bm J^{-\intercal} = \sum_i \varphi_j \bm B_j^{(-)}
+  \]
+  \[
+    \bm J^{-1} \bm J^{-\intercal} = \bm I + \varphi \bm D_1 - \varphi^2 \bm D_2
+  \]
 \end{frame}
 
 \begin{frame}
@@ -630,6 +681,8 @@
     \int_{\hat{\Omega}} (\hat{\bm u} \cdot \nabla) \bm B^{(+)}_i \hat{\bm v} \cdot \bm B^{(+)}_j \hat{\bm w}.
   \end{align*}
 \end{frame}
+
+\section{Results}
 
 \begin{frame}
   \frametitle{Spectrum}
@@ -820,9 +873,28 @@
 % \end{frame}
 
 \begin{frame}
+  \frametitle{Speedup factors}
+
+  \begin{center}
+    \bgroup\def\arraystretch{1.2}
+    \begin{tabular}{crr}
+      $\sharp$ DoFs ($M$) & {\bf Taylor-Hood} & {\bf Conforming} \\
+      \hline $10$ & $1483$ & $6890$ \\
+      $20$ & $390$ & $2616$ \\
+      $30$ & $111$ & $1441$ \\
+      $40$ & $52$ & $843$ \\
+      $50$ & $27$ & $502$ \\
+      \hline
+    \end{tabular}
+    \egroup
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
   \frametitle{Summary}
   \begin{itemize}
-  \item Reduced order models can offer dramatic speed-ups for certain applications.
+  \item Reduced order models offer dramatic speed-ups for certain applications.
   \item They combine nicely with IGA and div-compatible spaces to form fully
     divergence-free function spaces without need for pressure fields.
   \item Divergence-free RBMs can be much faster than other RBMs, in spite of additional complexity
