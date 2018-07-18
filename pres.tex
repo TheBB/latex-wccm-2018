@@ -119,17 +119,17 @@
     \begin{tikzpicture}[
       class/.style={rectangle, draw=darkblue, rounded corners, align=center, minimum height=0.7cm}
       ]
-      \node[class, fill=salmon] (MU1) at (-2.1,-1.6) {$\bm \mu_1$};
-      \node[class, fill=salmon] (MU2) at (-2.1,-0.8) {$\bm \mu_2$};
+      \node[class, fill=salmon] (MU1) at (-2.1,-1.6) {$\bm \mu_5$};
+      \node[class, fill=salmon] (MU2) at (-2.1,-0.8) {$\bm \mu_4$};
       \node[class, fill=salmon] (MU3) at (-2.1,0) {$\bm \mu_3$};
-      \node[class, fill=salmon] (MU4) at (-2.1,0.8) {$\bm \mu_4$};
-      \node[class, fill=salmon] (MU5) at (-2.1,1.6) {$\bm \mu_5$};
+      \node[class, fill=salmon] (MU4) at (-2.1,0.8) {$\bm \mu_2$};
+      \node[class, fill=salmon] (MU5) at (-2.1,1.6) {$\bm \mu_1$};
       \node[class] (MOD) at (0,0) {Model};
-      \node[class] (SOL1) at (2.1,-1.6) {$\bm u(\bm \mu_1)$};
-      \node[class] (SOL2) at (2.1,-0.8) {$\bm u(\bm \mu_2)$};
+      \node[class] (SOL1) at (2.1,-1.6) {$\bm u(\bm \mu_5)$};
+      \node[class] (SOL2) at (2.1,-0.8) {$\bm u(\bm \mu_4)$};
       \node[class] (SOL3) at (2.1,0) {$\bm u(\bm \mu_3)$};
-      \node[class] (SOL4) at (2.1,0.8) {$\bm u(\bm \mu_4)$};
-      \node[class] (SOL5) at (2.1,1.6) {$\bm u(\bm \mu_5)$};
+      \node[class] (SOL4) at (2.1,0.8) {$\bm u(\bm \mu_2)$};
+      \node[class] (SOL5) at (2.1,1.6) {$\bm u(\bm \mu_1)$};
       \draw[->,rounded corners] (MU1.east) -- ++(0.6,0) |- ([yshift=-6]MOD.west);
       \draw[->,rounded corners] (MU2.east) -- ++(0.3,0) |- ([yshift=-3]MOD.west);
       \draw[->] (MU3.east) -- (MOD.west);
