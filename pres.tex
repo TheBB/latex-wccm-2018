@@ -43,12 +43,14 @@
 \begin{document}
 
 \title[Reduced Order Models]{
-  Reduced Order Models for Divergence-Conforming Isogeometric Flow Simulations
+  Adaptive Isogeometric Methods \\ and Reduced Order Modeling
 }
 \author[T.~Kvamsdal]{
   T.~Kvamsdal\inst{1,2} \and
-  E.~Fonn\inst{2} \and
   E.~H.~van Brummelen\inst{3} \and
+  E.~Fonn\inst{2} \and
+  K.~Johannessen\inst{2} \and
+  A.~M.~Kvarving\inst{2} \and
   A.~Rasheed\inst{2} \and
 }
 \institute[NTNU/SINTEF]{
@@ -59,7 +61,7 @@
   \and \inst{3}%
   Department of Mechanical Engineering, TU/e
 }
-\date[WCCM 2018]{}
+\date[IGA 2018]{}
 
 \titlegraphic{
   \includegraphics[height=0.05\textheight]{common/ntnu} \hspace{0.1\textheight}
@@ -72,15 +74,13 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Outline}
-  \begin{enumerate}
-  \item Basics of Reduced Basis Methods
-  \item Stationary Navier-Stokes flow
-  \item Pressure recovery
-  \item Numerical examples
-  \item Results
-  \item Concluding remarks
-  \end{enumerate}
+  \frametitle{Contents}
+
+  \begin{itemize}
+  \item Basics of reduced basis methods
+  \item Reduced Order Models (ROM) for Navier-Stokes
+  \item First step towards certified ROM
+  \end{itemize}
 \end{frame}
 
 \section{Basics of Reduced Basis Methods}
@@ -325,7 +325,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Stationary Navier-Stokes flow}
+\section{Reduced Order Models (ROM) for Navier-Stokes}
 
 \begin{frame}
   \frametitle{Navier-Stokes equations}
@@ -449,104 +449,104 @@
   \end{center}
 \end{frame}
 
-\section{Pressure recovery}
+% \section{Pressure recovery}
 
-\begin{frame}
-  \frametitle{Pressure recovery}
+% \begin{frame}
+%   \frametitle{Pressure recovery}
 
-  \begin{itemize}
-  \item The simplest approach is to attach pressure data to divergence-free velocity basis
-    functions.
-  \item Pressure recovery becomes ``free'' (no linear system to solve, use coefficients from RB
-    velocity solution).
-  \item However, this implies a linear velocity-pressure relationship, in violation of
-    e.g.~Navier-Stokes.
-  \item Could work depending on problem.
-  \end{itemize}
-\end{frame}
+%   \begin{itemize}
+%   \item The simplest approach is to attach pressure data to divergence-free velocity basis
+%     functions.
+%   \item Pressure recovery becomes ``free'' (no linear system to solve, use coefficients from RB
+%     velocity solution).
+%   \item However, this implies a linear velocity-pressure relationship, in violation of
+%     e.g.~Navier-Stokes.
+%   \item Could work depending on problem.
+%   \end{itemize}
+% \end{frame}
 
-\begin{frame}
-  \frametitle{Pressure recovery}
+% \begin{frame}
+%   \frametitle{Pressure recovery}
 
-  \begin{itemize}
-  \item Another approach is to solve the momentum equation with a different test space.
-  \item The ``optimal'' test functions are \emph{supremizers}, maximizers of the ``sup'' part of the
-    inf-sup condition, for any specific pressure solution.
-  \item Supremizers form a reduced space just like velocity and pressure do.
-  \item Supremizers are commonly used to enrich non-divergence-free reduced velocity spaces for stability.
-    \footcite{Ballarin2015ssp}
-  \end{itemize}
-\end{frame}
+%   \begin{itemize}
+%   \item Another approach is to solve the momentum equation with a different test space.
+%   \item The ``optimal'' test functions are \emph{supremizers}, maximizers of the ``sup'' part of the
+%     inf-sup condition, for any specific pressure solution.
+%   \item Supremizers form a reduced space just like velocity and pressure do.
+%   \item Supremizers are commonly used to enrich non-divergence-free reduced velocity spaces for stability.
+%     \footcite{Ballarin2015ssp}
+%   \end{itemize}
+% \end{frame}
 
-\begin{frame}
-  \frametitle{Anatomy of a reduced system (cont.)}
+% \begin{frame}
+%   \frametitle{Anatomy of a reduced system (cont.)}
 
-  \begin{center}
-    \begin{tikzpicture}[scale=1]
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (0,-0.5) rectangle (0.95,-1.45);
-      \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (1,-0.5) rectangle (1.95,-1.45);
-      \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (0,-1.5) rectangle (0.95,-2.45);
-      \node at (0.475,-0.975) {\large $VV$};
-      \node at (1.475,-0.975) {\large $VP$};
-      \node at (0.475,-1.975) {\large $PV$};
+%   \begin{center}
+%     \begin{tikzpicture}[scale=1]
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (0,-0.5) rectangle (0.95,-1.45);
+%       \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (1,-0.5) rectangle (1.95,-1.45);
+%       \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (0,-1.5) rectangle (0.95,-2.45);
+%       \node at (0.475,-0.975) {\large $VV$};
+%       \node at (1.475,-0.975) {\large $VP$};
+%       \node at (0.475,-1.975) {\large $PV$};
 
-      \node at (2.4,-1.5) {$\Rightarrow$};
+%       \node at (2.4,-1.5) {$\Rightarrow$};
 
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (3,0) rectangle (3.95,-0.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (4,0) rectangle (4.95,-0.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (3,-1) rectangle (3.95,-1.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (4,-1) rectangle (4.95,-1.95);
-      \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (5,0) rectangle (5.95,-0.95);
-      \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (3,-2) rectangle (3.95,-2.95);
-      \fill[salmon, draw=black, very thick, rounded corners=2mm] (5,-1) rectangle (5.95,-1.95);
-      \fill[salmon, draw=black, very thick, rounded corners=2mm] (4,-2) rectangle (4.95,-2.95);
-      \node at (3.475,-0.475) {\large $VV$};
-      \node at (4.475,-0.475) {\large $VS$};
-      \node at (5.475,-0.475) {\large $VP$};
-      \node at (3.475,-1.475) {\large $SV$};
-      \node at (4.475,-1.475) {\large $SS$};
-      \node at (5.475,-1.475) {\large $SP$};
-      \node at (3.475,-2.475) {\large $PV$};
-      \node at (4.475,-2.475) {\large $PS$};
-    \end{tikzpicture}
-    \\~\\
-    \textcolor{white}{Note the block triangular structure.}
-  \end{center}
-\end{frame}
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (3,0) rectangle (3.95,-0.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (4,0) rectangle (4.95,-0.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (3,-1) rectangle (3.95,-1.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (4,-1) rectangle (4.95,-1.95);
+%       \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (5,0) rectangle (5.95,-0.95);
+%       \fill[salmon, draw=black, densely dotted, rounded corners=2mm] (3,-2) rectangle (3.95,-2.95);
+%       \fill[salmon, draw=black, very thick, rounded corners=2mm] (5,-1) rectangle (5.95,-1.95);
+%       \fill[salmon, draw=black, very thick, rounded corners=2mm] (4,-2) rectangle (4.95,-2.95);
+%       \node at (3.475,-0.475) {\large $VV$};
+%       \node at (4.475,-0.475) {\large $VS$};
+%       \node at (5.475,-0.475) {\large $VP$};
+%       \node at (3.475,-1.475) {\large $SV$};
+%       \node at (4.475,-1.475) {\large $SS$};
+%       \node at (5.475,-1.475) {\large $SP$};
+%       \node at (3.475,-2.475) {\large $PV$};
+%       \node at (4.475,-2.475) {\large $PS$};
+%     \end{tikzpicture}
+%     \\~\\
+%     \textcolor{white}{Note the block triangular structure.}
+%   \end{center}
+% \end{frame}
 
-\begin{frame}
-  \frametitle{Anatomy of a reduced system (cont.)}
+% \begin{frame}
+%   \frametitle{Anatomy of a reduced system (cont.)}
 
-  \begin{center}
-    \begin{tikzpicture}[scale=1]
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (7,-0.5) rectangle (7.95,-1.45);
-      \draw[black, densely dotted, rounded corners=2mm] (8,-0.5) rectangle (8.95,-1.45);
-      \draw[black, densely dotted, rounded corners=2mm] (7,-1.5) rectangle (7.95,-2.45);
-      \node at (7.475,-0.975) {\large $VV$};
+%   \begin{center}
+%     \begin{tikzpicture}[scale=1]
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (7,-0.5) rectangle (7.95,-1.45);
+%       \draw[black, densely dotted, rounded corners=2mm] (8,-0.5) rectangle (8.95,-1.45);
+%       \draw[black, densely dotted, rounded corners=2mm] (7,-1.5) rectangle (7.95,-2.45);
+%       \node at (7.475,-0.975) {\large $VV$};
 
-      \node at (9.4,-1.5) {$\Rightarrow$};
+%       \node at (9.4,-1.5) {$\Rightarrow$};
 
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (10,0) rectangle (10.95,-0.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (11,0) rectangle (11.95,-0.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (10,-1) rectangle (10.95,-1.95);
-      \fill[cadet, draw=black, very thick, rounded corners=2mm] (11,-1) rectangle (11.95,-1.95);
-      \draw[black, densely dotted, rounded corners=2mm] (12,0) rectangle (12.95,-0.95);
-      \draw[black, densely dotted, rounded corners=2mm] (10,-2) rectangle (10.95,-2.95);
-      \fill[salmon, draw=black, very thick, rounded corners=2mm] (12,-1) rectangle (12.95,-1.95);
-      \fill[salmon, draw=black, very thick, rounded corners=2mm] (11,-2) rectangle (11.95,-2.95);
-      \node at (10.475,-0.475) {\large $VV$};
-      \node at (11.475,-0.475) {\large $VS$};
-      \node at (10.475,-1.475) {\large $SV$};
-      \node at (11.475,-1.475) {\large $SS$};
-      \node at (12.475,-1.475) {\large $SP$};
-      \node at (11.475,-2.475) {\large $PS$};
-    \end{tikzpicture}
-    \\~\\
-    Note the block triangular structure.
-  \end{center}
-\end{frame}
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (10,0) rectangle (10.95,-0.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (11,0) rectangle (11.95,-0.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (10,-1) rectangle (10.95,-1.95);
+%       \fill[cadet, draw=black, very thick, rounded corners=2mm] (11,-1) rectangle (11.95,-1.95);
+%       \draw[black, densely dotted, rounded corners=2mm] (12,0) rectangle (12.95,-0.95);
+%       \draw[black, densely dotted, rounded corners=2mm] (10,-2) rectangle (10.95,-2.95);
+%       \fill[salmon, draw=black, very thick, rounded corners=2mm] (12,-1) rectangle (12.95,-1.95);
+%       \fill[salmon, draw=black, very thick, rounded corners=2mm] (11,-2) rectangle (11.95,-2.95);
+%       \node at (10.475,-0.475) {\large $VV$};
+%       \node at (11.475,-0.475) {\large $VS$};
+%       \node at (10.475,-1.475) {\large $SV$};
+%       \node at (11.475,-1.475) {\large $SS$};
+%       \node at (12.475,-1.475) {\large $SP$};
+%       \node at (11.475,-2.475) {\large $PS$};
+%     \end{tikzpicture}
+%     \\~\\
+%     Note the block triangular structure.
+%   \end{center}
+% \end{frame}
 
-\section{Numerical examples}
+\section{Numerical example: Flow around airfoil}
 
 \begin{frame}
   \frametitle{Flow around airfoil}
@@ -692,8 +692,6 @@
     \int_{\hat{\Omega}} (\hat{\bm u} \cdot \nabla) \bm B^{(+)}_i \hat{\bm v} \cdot \bm B^{(+)}_j \hat{\bm w}.
   \end{align*}
 \end{frame}
-
-\section{Results}
 
 \begin{frame}
   \frametitle{Spectrum}
@@ -865,28 +863,12 @@
         \draw[rounded corners=1mm, thick] (axis cs:0.0255,0.009) rectangle (axis cs:0.035,0.032);
         \draw[rounded corners=1mm, thick] (axis cs:0.255,0.009) rectangle (axis cs:0.35,0.020);
         \draw (axis cs:0.0299,0.009) -- (axis cs:0.0299,0.003) -- (axis cs:0.299,0.003) -- (axis cs:0.299,0.009);
-        \node[anchor=south] at (axis cs:0.18,0.003) {\boldmath$\times 10$};
-        \legend{TH ($v$), TH ($p$), DC ($v$), DC ($p$), DC-LP ($v$), DC-LP ($p$)}
+        \node[anchor=south] at (axis cs:0.18,0.003) {$\times 10$};
+        \legend{TH ($v$), TH ($p$), DC ($v$), DC ($p$), DC-LP ($v$), DC-LP ($p$)};
       \end{axis}
     \end{tikzpicture}
   \end{center}
 \end{frame}
-
-% \begin{frame}
-%   \frametitle{Solutions}
-
-%   \begin{center}
-%     \only<1>{\includegraphics[height=0.6\textheight]{figs/no-piola-full}
-%     }\only<2>{\includegraphics[height=0.6\textheight]{figs/piola-full}
-%     }\only<3>{\includegraphics[height=0.6\textheight]{figs/no-piola-red}
-%     }\only<4>{\includegraphics[height=0.6\textheight]{figs/piola-red}}
-%     \\
-%     \only<1>{Full TH solution: $39$ seconds.
-%     }\only<2>{Full DC solution: $113$ seconds.*
-%     }\only<3>{Reduced TH solution ($30$ DoFs): $523$ milliseconds.
-%     }\only<4>{Reduced DC solution ($30$ DoFs): $96$ milliseconds.}
-%   \end{center}
-% \end{frame}
 
 \begin{frame}
   \frametitle{Speedup factors}
@@ -904,8 +886,422 @@
     \end{tabular}
     \egroup
   \end{center}
-
 \end{frame}
+
+\section{First step towards certified ROM}
+
+\begin{frame}
+  \frametitle{First step towards certified ROM}
+  \begin{itemize}
+  \item High-Fidelity snapshots of prescribed accuracy using adaptive IGA
+  \item ROM with verified accuracy on training set (+ test set)
+  \end{itemize}
+
+  \vspace{1cm}
+  Total error in the reduced order model can be bounded as follows:
+  \begin{equation}
+    \|u-u_\textsc{m}\| \leq \|u-u_h\| + \|u_h-u_\textsc{m}\|
+    \nonumber
+  \end{equation}
+\end{frame}
+
+\begin{frame}
+  \frametitle{High Fidelity snapshots of presribed accuracy}
+
+  \begin{itemize}
+  \item Want guaranteed upper bound error estimates that is not too conservative
+    \begin{itemize}
+    \item May be satisfactory with asymptotic exact error estimates
+    \item We use here recovery based error estimates (CGL2)
+    \end{itemize}
+  \item May need to merge snapshots from different adapted meshes
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{ROM with verified accuracy on training set (+ test set)}
+  \begin{itemize}
+  \item Select number of RBs based on error compared to HF:
+    \begin{itemize}
+    \item Compute average error in the training set
+    \item Compute the maximum error in the training set
+    \end{itemize}
+  \item Can extend the comparison on a randomly chosen test set
+  \end{itemize}
+\end{frame}
+
+\section{Numerical example: L-shape deformation (adaptive)}
+
+\begin{frame}
+  \frametitle{L-shape deformation}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw[fill=black!30, thick] (0,0) -- (2,0) -- (2,-2) -- (-2,-2) -- (-2,2) -- (0,2) -- (0,0);
+    \end{tikzpicture}
+  \end{center}
+
+  Neumann conditions (almost) everywhere, based on analytic solution.
+
+  \begin{itemize}
+  \item $E \in [\SI{1e5}{\pascal}, \SI{3e5}{\pascal}]$
+  \item $\nu \in [0.2, 0.4]$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{L-shape deformation}
+
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{lshape/sol}
+    \\~\\
+    Typical solution with singularity in the corner.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Spectra}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+        xlabel={$k$},
+        ylabel={$\lambda_k$},
+        ymode=log,
+        xmin=1, xmax=10,
+        xtick={1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        grid=both,
+        axis lines=left,
+        legend cell align={left},
+        legend style={
+          at={(.95, .95)},
+          anchor=north east,
+          font=\small,
+        },
+        ]
+        \addplot[blue, thick, mark=o] table[x index={0}, y index={1}]{lshape/spectrum-00.csv};
+        \addplot[green, thick, mark=o] table[x index={0}, y index={1}]{lshape/spectrum-04.csv};
+        \addplot[red, thick, mark=o] table[x index={0}, y index={1}]{lshape/spectrum-09.csv};
+        \legend{Level 1, Level 5, Level 10};
+      \end{axis}
+      \begin{axis}[
+        ylabel={Energy captured},
+        xmin=1, xmax=10,
+        ymin=0.95, ymax=1.001,
+        ytick={0.95, 0.96, 0.97, 0.98, 0.99, 1.0},
+        yticklabels={95\%, 96\%, 97\%, 98\%, 99\%, 100\%},
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        axis y line=right,
+        axis x line=none,
+        legend style={
+          at={(1, 1)},
+          anchor=north east,
+          font=\small,
+        },
+        ]
+        \addplot[blue, dotted, thick] table[x index={0}, y index={2}]{lshape/spectrum-00.csv};
+        \addplot[green, dotted, thick] table[x index={0}, y index={2}]{lshape/spectrum-04.csv};
+        \addplot[red, dotted, thick] table[x index={0}, y index={2}]{lshape/spectrum-09.csv};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Meshes}
+
+ \begin{center}
+   \includegraphics[width=0.3\textwidth]{lshape/00-mesh}
+   \includegraphics[width=0.3\textwidth]{lshape/05-mesh}
+   \includegraphics[width=0.3\textwidth]{lshape/09-mesh}
+   \\~\\
+   Level 1, 5 and 10.
+ \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 1}
+
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-00-00}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-04-00}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-09-00}
+   \\~\\
+   Level 1, 5 and 10.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 2}
+
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-00-01}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-04-01}
+    \includegraphics[width=0.3\textwidth]{lshape/mode-09-01}
+   \\~\\
+   Level 1, 5 and 10.
+  \end{center}
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{Mode 3}
+
+%   \begin{center}
+%     \includegraphics[width=0.3\textwidth]{lshape/mode-00-02}
+%     \includegraphics[width=0.3\textwidth]{lshape/mode-04-02}
+%     \includegraphics[width=0.3\textwidth]{lshape/mode-09-02}
+%    \\~\\
+%    Level 1, 5 and 10.
+%   \end{center}
+% \end{frame}
+
+\begin{frame}
+  \frametitle{Mean relative ROM error per DoF}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+        xlabel={$\sharp$ DoFs},
+        ylabel={Mean relative error (actual)},
+        ymode=log,
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        grid=both,
+        axis lines=left,
+        legend cell align={left},
+        legend style={
+          at={(1, 1)},
+          anchor=north east,
+          font=\scriptsize,
+        },
+        ]
+        \addplot[mark=o, blue, thick] table[x index={0}, y index={1}]{lshape/errs.csv};
+        \addplot[mark=o, green, thick] table[x index={0}, y index={5}]{lshape/errs.csv};
+        \addplot[mark=o, red, thick] table[x index={0}, y index={10}]{lshape/errs.csv};
+        \legend{Level 1, Level 5, Level 10};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mean relative total error per DoF}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+        xlabel={$\sharp$ DoFs},
+        ylabel={Mean relative error (actual)},
+        xmode=log, ymode=log,
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        grid=both,
+        axis lines=left,
+        legend cell align={left},
+        legend style={
+          at={(1, 1)},
+          anchor=north east,
+          font=\scriptsize,
+        },
+        ]
+        \addplot[mark=o, blue, thick] table[x index={0}, y index={1}]{lshape/adap.csv};
+        \addplot[mark=o, red, thick] table[x index={0}, y index={1}]{lshape/toterrs.csv};
+        \addplot[mark=o, green, thick] table[x index={0}, y index={5}]{lshape/toterrs.csv};
+        \addplot[mark=o, magenta, thick] table[x index={0}, y index={10}]{lshape/toterrs.csv};
+        \legend{High-fidelity, Level 1, Level 5, Level 10};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\section{Numerical example: Beam deformation (adaptive)}
+
+\begin{frame}
+  \frametitle{Beam deformation}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw[fill=black!30, thick] (0,0) -- (7,0) -- (7,1) -- (0,1) -- (0,0);
+      \draw (0,0) -- (-0.1,0.1);
+      \draw (0,0.1) -- (-0.1,0.2);
+      \draw (0,0.2) -- (-0.1,0.3);
+      \draw (0,0.3) -- (-0.1,0.4);
+      \draw (0,0.4) -- (-0.1,0.5);
+      \draw (0,0.5) -- (-0.1,0.6);
+      \draw (0,0.6) -- (-0.1,0.7);
+      \draw (0,0.7) -- (-0.1,0.8);
+      \draw (0,0.8) -- (-0.1,0.9);
+      \draw (0,0.9) -- (-0.1,1.0);
+      \draw (0,1.0) -- (-0.1,1.1);
+      \draw[->] (7,0) -- (7.6,0.2);
+      \draw[->] (7,0.3333) -- (7.6,0.53333);
+      \draw[->] (7,0.6666) -- (7.6,0.86666);
+      \draw[->] (7,1) -- (7.6,1.2);
+      \node[anchor=west] at (7.6,0.7) {$\bm f$};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+  \item $E \in [\SI{1e5}{\pascal}, \SI{5e5}{\pascal}]$
+  \item $\nu \in [0.2, 0.4]$
+  \item $\bm f_x, \bm f_y \in [-\SI{10}{\pascal}, \SI{10}{\pascal}]$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Beam deformation}
+
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{beam/sol}
+    \\~\\
+    Typical solution with refinement towards the Dirichlet boundary.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Spectra}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+        xlabel={$k$},
+        ylabel={$\lambda_k$},
+        ymode=log,
+        xmin=1, xmax=10,
+        xtick={1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        grid=both,
+        axis lines=left,
+        legend cell align={left},
+        legend style={
+          at={(.95, .95)},
+          anchor=north east,
+          font=\small,
+        },
+        ]
+        \addplot[blue, thick, mark=o] table[x index={0}, y index={1}]{beam/spectrum-00.csv};
+        \addplot[green, thick, mark=o] table[x index={0}, y index={1}]{beam/spectrum-04.csv};
+        \addplot[red, thick, mark=o] table[x index={0}, y index={1}]{beam/spectrum-09.csv};
+        \legend{Level 1, Level 5, Level 10};
+      \end{axis}
+      \begin{axis}[
+        ylabel={Energy captured},
+        xmin=1, xmax=10,
+        ymin=0.95, ymax=1.001,
+        ytick={0.95, 0.96, 0.97, 0.98, 0.99, 1.0},
+        yticklabels={95\%, 96\%, 97\%, 98\%, 99\%, 100\%},
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        axis y line=right,
+        axis x line=none,
+        legend style={
+          at={(1, 1)},
+          anchor=north east,
+          font=\small,
+        },
+        ]
+        \addplot[blue, dotted, thick] table[x index={0}, y index={2}]{beam/spectrum-00.csv};
+        \addplot[green, dotted, thick] table[x index={0}, y index={2}]{beam/spectrum-04.csv};
+        \addplot[red, dotted, thick] table[x index={0}, y index={2}]{beam/spectrum-09.csv};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Meshes}
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{beam/00-mesh} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/04-mesh} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/07-mesh}
+    \\~\\
+    Level 1, 5 and 8.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 1}
+
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{beam/mode-00-00}
+    \includegraphics[width=0.3\textwidth]{beam/mode-04-00}
+    \includegraphics[width=0.3\textwidth]{beam/mode-07-00}
+   \\~\\
+   Level 1, 5 and 8.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 2}
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{beam/mode-00-01} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-04-01} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-07-01}
+   \\~\\
+   Level 1, 5 and 8.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 3}
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{beam/mode-00-02} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-04-02} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-07-02}
+   \\~\\
+   Level 1, 5 and 8.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mode 4}
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{beam/mode-00-03} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-04-03} \\
+    \vspace{0.3cm} \includegraphics[width=0.8\textwidth]{beam/mode-07-03}
+   \\~\\
+   Level 1, 5 and 8.
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mean relative ROM error per DoF (Beam)}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+        xlabel={$\sharp$ DoFs},
+        ylabel={Mean relative error (actual)},
+        ymode=log,
+        width=0.8\textwidth,
+        height=0.6\textwidth,
+        grid=both,
+        axis lines=left,
+        legend cell align={left},
+        legend style={
+          at={(1, 1)},
+          anchor=north east,
+          font=\scriptsize,
+        },
+        ]
+        \addplot[mark=o, blue, thick] table[x index={0}, y index={1}]{beam/errs.csv};
+        \addplot[mark=o, green, thick] table[x index={0}, y index={5}]{beam/errs.csv};
+        \addplot[mark=o, red, thick] table[x index={0}, y index={8}]{beam/errs.csv};
+        \legend{Level 1, Level 5, Level 8};
+      \end{axis}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\section{Summary}
 
 \begin{frame}
   \frametitle{Summary}
@@ -913,8 +1309,11 @@
   \item Reduced order models offer dramatic speed-ups for certain applications.
   \item They combine nicely with IGA and div-compatible spaces to form fully
     divergence-free function spaces without need for pressure fields.
-  \item Divergence-free RBMs can be much faster than other RBMs, in spite of additional complexity
-    in the offline stage (remember, all is fair there.)
+  \item Divergence-free RBMs can be much faster than conventional RBMs.
+  \item The number of reduced basis functions is moderately affected by highly refined snapshot
+    meshes.
+  \item Adaptive IGA combined with ROM is a promising enabling technology for real-time
+    computational modelling.
   \end{itemize}
   ~\\ \begin{center} Thank you! \end{center}
 \end{frame}
